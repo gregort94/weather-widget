@@ -3,16 +3,8 @@
   </VueMultiselect>
 </template>
 
-<script lang="ts">
-import {defineComponent} from 'vue'
+<script lang="ts" setup>
 import VueMultiselect from 'vue-multiselect'
-
-export default defineComponent({
-  components: {VueMultiselect},
-  data() {
-    return {}
-  },
-})
 </script>
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>

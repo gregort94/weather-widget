@@ -56,59 +56,43 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import {defineComponent} from 'vue'
-import {mapActions, mapState} from 'pinia';
+<script lang="ts" setup>
 import {useMainStore} from '@/store';
-import {WeatherBrief} from '@/types';
+import {computed, onBeforeUnmount, ref} from "vue";
+import {storeToRefs} from "pinia";
 
 const UPDATE_INTERVAL = 1000 * 60 * 10 // 10 minutes
 
-export default defineComponent({
-  components: {},
-  data() {
-    return {
-      isLoading: false,
-      intervalId: null as number | null,
-    }
-  },
-  computed: {
-    ...mapState(useMainStore, ['activeLocationWeather', 'activeLocation']),
-    getTemperature(): number {
-      return this.activeLocationWeather
-        // @ts-ignore
-        ? Number.parseInt(this.activeLocationWeather.temperature.main - 273.15)
-        : null
-    },
-    getWindSpeed(): number {
-      return this.activeLocationWeather?.wind.speed
-    },
-    getHumidity(): number {
-      return this.activeLocationWeather?.humidity
-    },
-    getBrief(): WeatherBrief {
-      return this.activeLocationWeather?.brief
-    }
-  },
-  created() {
-    if (this.activeLocation) {
-      this.updateWeather()
-      this.intervalId = setInterval(this.updateWeather, UPDATE_INTERVAL)
-    }
-  },
-  methods: {
-    ...mapActions(useMainStore, ['fetchLocationWeather']),
-    async updateWeather() {
-      this.isLoading = true
-      try {
-        await this.fetchLocationWeather()
-      } finally {
-        this.isLoading = false
-      }
-    }
-  },
-  beforeUnmount() {
-    clearInterval(this.intervalId)
+const store = useMainStore()
+const {activeLocationWeather, activeLocation} = storeToRefs(store)
+const {fetchLocationWeather} = store
+
+let isLoading = ref(false)
+let intervalId: any = null
+
+const getTemperature = computed(() => activeLocationWeather.value
+  ? Math.round(activeLocationWeather.value?.temperature.main - 273.15)
+  : null
+)
+const getWindSpeed = computed(() => activeLocationWeather.value?.wind.speed)
+const getHumidity = computed(() => activeLocationWeather.value?.humidity)
+const getBrief = computed(() => activeLocationWeather.value?.brief)
+
+const updateWeather = async () => {
+  isLoading.value = true
+  try {
+    await fetchLocationWeather()
+  } finally {
+    isLoading.value = false
   }
+}
+
+if (activeLocation) {
+  updateWeather()
+  intervalId = setInterval(updateWeather, UPDATE_INTERVAL)
+}
+
+onBeforeUnmount(() => {
+  clearInterval(intervalId)
 })
 </script>

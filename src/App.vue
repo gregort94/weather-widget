@@ -45,34 +45,20 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import {defineComponent} from 'vue'
+<script lang="ts" setup>
 import AppSettings from '@/components/AppSettings.vue';
 import LocationWeatherCard from '@/components/LocationWeatherCard.vue';
-import {mapActions, mapState} from 'pinia';
-import {useMainStore} from '@/store';
+import {useMainStore} from "@/store";
+import {storeToRefs} from "pinia";
+import {ref} from "vue";
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    AppSettings,
-    LocationWeatherCard
-  },
-  data() {
-    return {
-      isSettingsOpen: false
-    }
-  },
-  computed: {
-    ...mapState(useMainStore, ['activeLocation', 'isPermissionState']),
-  },
-  created() {
-    if (!this.activeLocation) {
-      this.getUserLocation()
-    }
-  },
-  methods: {
-    ...mapActions(useMainStore, ['getUserLocation'])
-  },
-})
+const store = useMainStore()
+const {activeLocation, isPermissionState} = storeToRefs(store)
+const {getUserLocation} = store
+
+const isSettingsOpen = ref(false)
+
+if (!activeLocation) {
+  getUserLocation();
+}
 </script>
