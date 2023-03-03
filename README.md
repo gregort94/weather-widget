@@ -41,17 +41,19 @@ The following requirements must be met in order to deploy the project:
 
 ### __Scaffolding__
 
+Install dependencies
+
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+Compiles and hot-reloads for development
 
 ```
 npm run dev
 ```
 
-### Compiles and minifies for production
+Compiles and minifies for production
 
 ```
 npm run build
