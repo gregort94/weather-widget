@@ -58,7 +58,7 @@ const {getUserLocation} = store
 
 const isSettingsOpen = ref(false)
 
-if (!activeLocation) {
+if (!activeLocation.value) {
   getUserLocation();
 }
 </script>
