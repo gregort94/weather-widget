@@ -36,7 +36,7 @@ const {selectedLocations} = withDefaults(defineProps<{
 const labelField = 'name'
 const locationKey = 'name'
 const items = ref<Location[]>([])
-let isLoading = ref(false)
+const isLoading = ref(false)
 
 const selectedLocationsIds = computed(() => selectedLocations.map((location) => location[locationKey]))
 
@@ -48,9 +48,12 @@ const options = computed(() => items.value.map((item) => ({
 const searchAPIDebounced = AwesomeDebouncePromise(fetchLocations, RATE_LIMIT);
 const fetchOptions = async (val: string) => {
   isLoading.value = true
-  const apiLocations = await searchAPIDebounced(val)
-  items.value = apiLocations.map((location) => formatLocationForInput(location))
-  isLoading.value = false
+  try {
+    const apiLocations = await searchAPIDebounced(val)
+    items.value = apiLocations.map((location) => formatLocationForInput(location))
+  } finally {
+    isLoading.value = false
+  }
 }
 const onSearch = (search: string) => {
   search && fetchOptions(search)
