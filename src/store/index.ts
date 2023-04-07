@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia';
 import {RemovableRef, useStorage} from '@vueuse/core'
 import {getPosition} from '@/utils';
-import {Coords, LocationWeather, Location} from '@/types';
+import {Coords, LocationWeather, Location, TemperatureScale} from '@/types';
 import {fetchLocationsByCoords, fetchLocationWeatherByCoords} from '@/api/weather';
 import {formatWeatherForInput} from '@/api/weather/utils';
 
@@ -10,6 +10,7 @@ interface State {
   userLocations: RemovableRef<Location[]>,
   isPermissionState: Boolean,
   activeLocationWeather: LocationWeather
+  temperatureScale: RemovableRef<TemperatureScale>
 }
 
 export const useMainStore = defineStore('main', {
@@ -17,7 +18,8 @@ export const useMainStore = defineStore('main', {
     userCoords: null,
     userLocations: useStorage('userLocations', []),
     isPermissionState: false,
-    activeLocationWeather: null
+    activeLocationWeather: null,
+    temperatureScale: useStorage('temperatureScale', TemperatureScale.Celsius)
   }),
   getters: {
     activeLocation: (state) => state.userLocations?.[0]

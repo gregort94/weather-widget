@@ -30,8 +30,17 @@ export interface WeatherBrief {
 }
 
 export interface LocationWeather {
-  temperature: { main: number }
+  temperature: {
+    /** Kelvin */
+    main: number
+  }
   wind: { speed: number }
   humidity: number
   brief: WeatherBrief
+}
+
+export enum TemperatureScale {
+  Kelvin = 'K',
+  Celsius = 'C',
+  Fahrenheit = 'F'
 }

@@ -3,10 +3,14 @@
     <v-card-text class="py-0">
       <v-row align="center" no-gutters>
         <v-col
-          class="text-h2"
+          class="text-h3"
           cols="6"
         >
-          {{ getTemperature }}&deg;C
+          <span>{{ getTemperature }}&deg;</span>
+          <span
+            class="cursor-pointer hover:text-neutral-400 select-none"
+            @click="onScaleClick"
+          >{{ temperatureScale }}</span>
         </v-col>
 
         <v-col class="text-right" cols="6">
@@ -60,20 +64,33 @@
 import {useMainStore} from '@/store';
 import {computed, onBeforeUnmount, ref} from "vue";
 import {storeToRefs} from "pinia";
+import {TemperatureScale} from '@/types';
+import {formatKelvinTo} from '@/utils';
 
 const UPDATE_INTERVAL = 1000 * 60 * 10 // 10 minutes
 
 const store = useMainStore()
-const {activeLocationWeather, activeLocation} = storeToRefs(store)
+const {activeLocationWeather, activeLocation, temperatureScale} = storeToRefs(store)
 const {fetchLocationWeather} = store
 
 let isLoading = ref(false)
 let intervalId: any = null
 
-const getTemperature = computed(() => activeLocationWeather.value
-  ? Math.round(activeLocationWeather.value?.temperature.main - 273.15)
-  : null
-)
+const onScaleClick = () => {
+  const scales = Object.values(TemperatureScale)
+  const idx = scales.findIndex((value) => value === temperatureScale.value)
+  if (idx === scales.length - 1) {
+    temperatureScale.value = scales[0]
+  } else {
+    temperatureScale.value = scales[idx + 1]
+  }
+}
+
+const getTemperature = computed(() => (
+  activeLocationWeather.value && Math.round(formatKelvinTo(
+    activeLocationWeather.value.temperature.main,
+    temperatureScale.value
+  ))))
 const getWindSpeed = computed(() => activeLocationWeather.value?.wind.speed)
 const getHumidity = computed(() => activeLocationWeather.value?.humidity)
 const getBrief = computed(() => activeLocationWeather.value?.brief)

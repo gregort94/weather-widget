@@ -1,4 +1,4 @@
-import {Location, LocationsApiLocation} from "@/types";
+import {Location, LocationsApiLocation, TemperatureScale} from "@/types";
 
 export const getPosition = (options?: PositionOptions): Promise<GeolocationPosition> => {
   return new Promise((resolve, reject) =>
@@ -26,5 +26,16 @@ export const formatLocationForInput = (apiLocation: LocationsApiLocation): Locat
     lon: apiLocation.longitude,
     country: apiLocation.country,
     state: apiLocation.region
+  }
+}
+
+export const formatKelvinTo = (value: number, scale: TemperatureScale) => {
+  switch (scale) {
+    case TemperatureScale.Kelvin:
+      return value
+    case TemperatureScale.Celsius:
+      return value - 273.15
+    case TemperatureScale.Fahrenheit:
+      return (value - 273.15) * 9 / 5 + 32
   }
 }
