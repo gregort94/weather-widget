@@ -19,7 +19,7 @@ export const useMainStore = defineStore('main', {
     userLocations: useStorage('userLocations', []),
     isPermissionState: false,
     activeLocationWeather: null,
-    temperatureScale: useStorage('temperatureScale', TemperatureScale.Celsius)
+    temperatureScale: useStorage('temperatureScale', TemperatureScale.Celsius) as RemovableRef<TemperatureScale>
   }),
   getters: {
     activeLocation: (state) => state.userLocations?.[0]
